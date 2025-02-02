@@ -2,7 +2,7 @@
 Controlador de REST API hecho con Spring Boot, administrado paquetes con Maven, conectandose a MySQL (MariaDB)
 
 ## REQUISITOS PARA CORRER
- - Java 17
+ - Java 17 o mayor
  - MySQL
     - Servicio MySQL activo y corriendo de fondo
     - Accesso a un usuario de la sesion 
