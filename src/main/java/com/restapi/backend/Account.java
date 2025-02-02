@@ -1,10 +1,32 @@
 package com.restapi.backend;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class Account {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer number;
+
+    @Column(nullable = false)
     private String name;
-    private int number;
-    private double balance;
-    private String state;
+
+    @Column(nullable = false)
+    private Double balance;
+
+    @Column(nullable = false)
+    private Boolean state;
+
+
+    public Integer getNumber() {
+        return number;
+    }
+
+
 
     public String getName() {
         return name;
@@ -15,28 +37,19 @@ public class Account {
 
 
 
-    public int getNumber() {
-        return number;
-    }
-    public void setNumber(int number) {
-        this.number = number;
-    }
-
-
-
-    public double getBalance() {
+    public Double getBalance() {
         return balance;
     }
-    public void setBalance(double balance) {
+    public void setBalance(Double balance) {
         this.balance = balance;
     }
 
 
 
-    public String getState() {
+    public Boolean getState() {
         return state;
     }
-    public void setState(String state) {
+    public void setState(Boolean state) {
         this.state = state;
     }
 }
