@@ -28,16 +28,19 @@ public class AccController {
     private AccountRepository accountRepository;
 
     @GetMapping("/accounts")
-    public List<Account> getAccounts() {
+    public  List<Account> getAccounts() {
         // Envia listado de cuentas activas
         return accountRepository.findAllActive();
     }
     
     @GetMapping("/accounts/{id}")
-    public Account getSpecificAccount(@PathVariable(value="id") Integer id) {
+    public ResponseEntity<Account> getSpecificAccount(@PathVariable(value="id") Integer id) {
         // Envia información específica de una cuenta de acuerdo
         //  al id en la URL. Tambien lista cuentas desactivadas
-        return accountRepository.findByNumber(id);
+
+        if (accountRepository.existsByNumber(id))
+            return ResponseEntity.ok(accountRepository.findByNumber(id));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
     @PostMapping("/accounts")
@@ -45,7 +48,6 @@ public class AccController {
                                   @RequestParam Double balance,
                                   @RequestParam Boolean state) {
         // Creación de nueva cuenta
-        // TODO: Registro debe viajar en el /body/ en formato JSON
         Account account = new Account();
         account.setName(name);
         account.setBalance(balance);
@@ -59,11 +61,11 @@ public class AccController {
                                  @RequestParam Optional<String> name,
                                  @RequestParam Optional<Double> balance,
                                  @RequestParam Optional<Boolean> state) {
-        // Modificar SALDO de cuenta
+        // Modificar cualquiera de los attributos
 
-        if ((!accountRepository.findByNumber(id).equals(Optional.empty())) 
-            && (name.isPresent() || balance.isPresent() || state.isPresent())){
-            // Check if account exists & if a parameter was passed
+        if ((accountRepository.existsByNumber(id)) &&
+            (name.isPresent() || balance.isPresent() || state.isPresent())){
+            // Ver si cuenta exists Y si parametro paso
             Account account = accountRepository.findByNumber(id);
             if (!name.isEmpty()) 
                 account.setName(name.get());
@@ -85,7 +87,7 @@ public class AccController {
     public ResponseEntity<Account> deleteMethodName(@PathVariable Integer id) {
         // ELIMINAR = DESACTIVAR CUENTA
 
-        if (!accountRepository.findByNumber(id).equals(Optional.empty())){
+        if (accountRepository.existsByNumber(id)){
             Account account = accountRepository.findByNumber(id);
             account.setState(false);
             accountRepository.save(account);
