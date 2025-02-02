@@ -6,16 +6,15 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 
 
@@ -42,7 +41,7 @@ public class AccController {
     }
 
     @PostMapping("/accounts")
-    public void postMethodName(@RequestParam String name,
+    public ResponseEntity<Account> postMethodName(@RequestParam String name,
                                   @RequestParam Double balance,
                                   @RequestParam Boolean state) {
         // Creación de nueva cuenta
@@ -52,11 +51,11 @@ public class AccController {
         account.setBalance(balance);
         account.setState(state);
         accountRepository.save(account);
-        return;
+        return ResponseEntity.ok(account);
     }
     
     @PutMapping("/accounts/{id}")
-    public Boolean putMethodName(@PathVariable Integer id,
+    public ResponseEntity<Account> putMethodName(@PathVariable Integer id,
                                  @RequestParam Optional<String> name,
                                  @RequestParam Optional<Double> balance,
                                  @RequestParam Optional<Boolean> state) {
@@ -76,22 +75,22 @@ public class AccController {
                 account.setState(state.get());
 
             accountRepository.save(account);
-            return true;
+            return ResponseEntity.ok(account);
         }
         
-        return false;
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
     @DeleteMapping("/accounts/{id}")
-    public Boolean deleteMethodName(@PathVariable Integer id) {
+    public ResponseEntity<Account> deleteMethodName(@PathVariable Integer id) {
         // ELIMINAR = DESACTIVAR CUENTA
 
         if (!accountRepository.findByNumber(id).equals(Optional.empty())){
             Account account = accountRepository.findByNumber(id);
             account.setState(false);
             accountRepository.save(account);
-            return true;
+            return ResponseEntity.ok(account);
         }
-        return false;
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 }
